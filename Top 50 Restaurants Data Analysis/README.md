@@ -24,6 +24,7 @@ The application will be a standalone web application developed using the Dash fr
 ### 2.2 Product Functions
 The main functions of the application include:
 - Loading and processing the restaurant dataset.
+- Allowing users to upload a file path for the dataset.
 - Displaying a bar chart of restaurants by appearance frequency.
 - Allowing users to select the x-axis and y-axis to dynamically update the graph.
 - Showing restaurant names directly on the bars for clarity when viewing data by country.
@@ -53,13 +54,17 @@ The application will run in a web browser and will be accessible from any device
 - The application shall load the dataset from a specified CSV file.
 - The application shall process the data to aggregate restaurant appearances and details.
 
-#### 3.1.2 Graph Display
+#### 3.1.2 File Upload
+- The application shall provide an interface for users to upload a file path for the dataset.
+- The application shall validate the uploaded file to ensure it is in the correct CSV format.
+
+#### 3.1.3 Graph Display
 - The application shall display a bar chart representing restaurant appearances.
 - Users shall have the option to select the x-axis as either "Country" or "Restaurant".
 - The y-axis shall display the count of appearances.
 - The application shall display restaurant names directly on the stacked bars when the x-axis is set to "Country".
 
-#### 3.1.3 Interactivity
+#### 3.1.4 Interactivity
 - Users shall be able to dynamically update the graph based on their selection of x-axis and y-axis.
 - The application shall provide hover information showing detailed data about each bar segment.
 
@@ -89,6 +94,7 @@ The application will run in a web browser and will be accessible from any device
 
 #### 3.3.2 Components
 - The application shall include:
+  - An upload component for users to specify the file path.
   - Dropdowns for selecting x-axis and y-axis.
   - A graph display area that updates based on user selections.
 
@@ -176,6 +182,12 @@ app.layout = html.Div([
     # Left interaction menu
     html.Div(
         children=[
+            html.Label('Upload CSV File:'),
+            dcc.Upload(
+                id='upload-data',
+                children=html.Button('Upload File'),
+                multiple=False
+            ),
             html.Label('Select X-Axis:'),
             dcc.Dropdown(
                 options=[
@@ -222,8 +234,17 @@ app.layout = html.Div([
     ]
 )
 def update_graph(x_axis, y_axis):
-    if x_axis == 'country':
-        # Create a new DataFrame for stacked bars
-        stacked_data = most_popular[['restaurant', 'country', 'Appearances']]
+    fig = px.bar(
+        most_popular, 
+        x=x_axis, 
+        y=y_axis,
+        title=f"{x_axis.capitalize()} vs {y_axis.capitalize()}"
+    )
+    fig.update_layout(
+        xaxis_title=x_axis.capitalize(),
+        yaxis_title=y_axis.capitalize()
+    )
+    return fig
 
-        # Create a stacked bar chart
+if __name__ == '__main__':
+    app.run_server(debug=True)
