@@ -59,37 +59,57 @@ app.layout = html.Div([
         style={'padding': '20px', 'background-color': '#f4f4f4'}
     ),
 
-    # Left interaction menu
+    # Flex container to hold left menu and main graph
     html.Div(
         children=[
-            html.Label('Select X-Axis:'),
-            dcc.Dropdown(
-                options=[
-                    {'label': 'Restaurant', 'value': 'restaurant'},
-                    {'label': 'Country', 'value': 'country'}
+            # Left interaction menu
+            html.Div(
+                children=[
+                    html.Label('Select X-Axis:'),
+                    dcc.Dropdown(
+                        options=[
+                            {'label': 'Restaurant', 'value': 'restaurant'},
+                            {'label': 'Country', 'value': 'country'}
+                        ],
+                        value='restaurant',  # Default value
+                        id='x-axis-dropdown',
+                        style={'margin-bottom': '20px'}
+                    ),
+                    html.Label('Select Y-Axis:'),
+                    dcc.Dropdown(
+                        options=[
+                            {'label': 'Appearances', 'value': 'Appearances'}
+                        ],
+                        value='Appearances',  # Default value
+                        id='y-axis-dropdown',
+                    ),
                 ],
-                value='restaurant',  # Default value
-                id='x-axis-dropdown',
-                style={'margin-bottom': '20px'}
+                style={
+                    'min-width': '250px',  # Minimum width for the side menu
+                    'max-width': '20%',  # Maximum width for the side menu
+                    'padding': '20px',
+                    'background-color': '#f9f9f9',
+                    'border-right': '1px solid #ddd',
+                    'flex-shrink': '0'  # Prevent shrinking below min-width
+                }
             ),
-            html.Label('Select Y-Axis:'),
-            dcc.Dropdown(
-                options=[
-                    {'label': 'Appearances', 'value': 'Appearances'}
+            # Main graph display
+            html.Div(
+                children=[
+                    dcc.Graph(id='main-graph', figure=create_initial_figure())
                 ],
-                value='Appearances',  # Default value
-                id='y-axis-dropdown',
-            ),
+                style={
+                    'flex-grow': '1',  # Allows this section to grow and shrink
+                    'padding': '20px',
+                    'max-width': '80%'
+                }
+            )
         ],
-        style={'width': '20%', 'float': 'left', 'padding': '20px'}
-    ),
-
-    # Main graph display
-    html.Div(
-        children=[
-            dcc.Graph(id='main-graph', figure=create_initial_figure())
-        ],
-        style={'width': '75%', 'float': 'right', 'padding': '20px'}
+        style={
+            'display': 'flex',  # Use flexbox for layout
+            'flex-direction': 'row',
+            'height': '100vh'  # Set the container to fill the viewport height
+        }
     )
 ], style={  # Overall page styling
     'font-family': 'Arial',
