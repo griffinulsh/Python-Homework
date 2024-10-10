@@ -140,7 +140,6 @@ def update_graph(x_axis, y_axis):
             color='restaurant',  # Color by restaurant
             title='Restaurants per Country',
             barmode='stack',
-            text='restaurant'  # Display restaurant names on the bars
         )
         
         # Hide the legend
@@ -150,10 +149,11 @@ def update_graph(x_axis, y_axis):
         updated_fig.update_traces(
             hovertemplate=(
                 'Country: %{x}<br>'
-                'Restaurant: %{text}<br>'  # Use text for restaurant names
+                'Restaurant: %{customdata[0]}<br>'  # Reference the customdata column
                 'Appearances: %{y}<br>'
                 '<extra></extra>'
             ),
+            customdata=stacked_data[['restaurant']].values  # Reference the customdata column
         )
     else:
         updated_fig = px.bar(
