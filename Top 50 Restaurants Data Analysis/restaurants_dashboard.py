@@ -2,9 +2,26 @@ import dash
 from dash import dcc, html
 import pandas as pd
 import plotly.express as px
+import argparse
+import os
 
-# Load the dataset. You can download the dataset from the ReadMe (source: Kaggle) and update the filepath below to get started. I know hardcoding this isn't ideal, will update later with google drive or API.
-file_path = "/Users/griffinulsh/Desktop/python_homework/datasets/WorldsBestRestaurants.csv"
+# Set up argparse to get file path from the user
+parser = argparse.ArgumentParser(description="Analyze the World's Best Restaurants dataset")
+parser.add_argument(
+    '--file_path', 
+    type=str, 
+    help="Path to the 'WorldsBestRestaurants.csv' file",
+    required=True
+)
+
+args = parser.parse_args()
+file_path = args.file_path
+
+# Check if the file exists
+if not os.path.exists(file_path):
+    print(f"File not found at {file_path}.")
+    print("Please download the 'WorldsBestRestaurants.csv' file as directed in the README.")
+    exit(1)  # Exit if file is missing
 data = pd.read_csv(file_path)
 
 # Grouping by 'restaurant' to aggregate appearances and details
@@ -86,7 +103,6 @@ app.layout = html.Div([
                 ],
                 style={
                     'min-width': '250px',  # Minimum width for the side menu
-                    'max-width': '20%',  # Maximum width for the side menu
                     'padding': '20px',
                     'background-color': '#f9f9f9',
                     'border-right': '1px solid #ddd',
@@ -100,8 +116,7 @@ app.layout = html.Div([
                 ],
                 style={
                     'flex-grow': '1',  # Allows this section to grow and shrink
-                    'padding': '20px',
-                    'max-width': '80%'
+                    'padding': '20px'
                 }
             )
         ],
@@ -141,28 +156,28 @@ def update_graph(x_axis, y_axis):
             title='Restaurants per Country',
             barmode='stack',
         )
-        
-        # Hide the legend
-        updated_fig.update_traces(showlegend=False)
 
-        # Update hover template for stacked bars
+        # Remove the text labels from bars but keep for hover
         updated_fig.update_traces(
             hovertemplate=(
                 'Country: %{x}<br>'
-                'Restaurant: %{customdata[0]}<br>'  # Reference the customdata column
+                'Restaurant: %{customdata[0]}<br>'  # Display restaurant names in hover
                 'Appearances: %{y}<br>'
                 '<extra></extra>'
             ),
-            customdata=stacked_data[['restaurant']].values  # Reference the customdata column
+            customdata=stacked_data[['restaurant']].values,  # Pass restaurant names to hover
+            text=None,  # Remove the text labels from bars
+            showlegend=False  # Remove legend
         )
     else:
+        # Create a bar chart by restaurant
         updated_fig = px.bar(
             most_popular, 
             x='restaurant', 
             y=y_axis, 
             title='Updated Visualization'
         )
-        
+
         updated_fig.update_traces(
             hovertemplate=(
                 'Restaurant: %{x}<br>'
@@ -170,7 +185,9 @@ def update_graph(x_axis, y_axis):
                 'Country: %{customdata[0]}<br>'
                 '<extra></extra>'
             ),
-            customdata=most_popular[['country']].values
+            customdata=most_popular[['country']].values,  # Ensure customdata includes country
+            text=None,  # Remove the text labels from bars
+            showlegend=False  # Remove legend
         )
 
     updated_fig.update_layout(
@@ -178,6 +195,8 @@ def update_graph(x_axis, y_axis):
         yaxis_title=y_axis.capitalize()
     )
     return updated_fig
+
+
 
 if __name__ == '__main__':
     app.run_server(debug=True)
