@@ -3,7 +3,7 @@ from dash import dcc, html
 import pandas as pd
 import plotly.express as px
 
-# Load the dataset
+# Load the dataset. You can download the dataset from the ReadMe (source: Kaggle) and set the filepath up locally to get started.
 file_path = "/Users/griffinulsh/Desktop/python_homework/datasets/WorldsBestRestaurants.csv"
 data = pd.read_csv(file_path)
 
