@@ -5,6 +5,8 @@ import plotly.express as px
 import argparse
 import os
 
+#To run the code, enter in your terminal: python3 restaurants_dashboard.py --file_path '/path/to/WorldsBestRestaurants.csv' and add in the path to the 'WorldsBestRestaurants.csv' file on your local machine.
+
 # Set up argparse to get file path from the user
 parser = argparse.ArgumentParser(description="Analyze the World's Best Restaurants dataset")
 parser.add_argument(
